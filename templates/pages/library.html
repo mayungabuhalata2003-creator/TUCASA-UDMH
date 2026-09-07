@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Library - TUMH{% endblock %}
+{% block content %}
+<h3 class="page-heading">Library ya TUMH</h3>
+<p class="page-subtext">Vitabu vya Ellen G. White, Biblia, na SDA Hymns kwa Kiswahili na English.</p>
+
+<form class="row g-2 mb-3" method="get">
+    <div class="col-md-5"><select name="category" class="form-select"><option value="all">Kategoria zote</option><option value="Ellen G. White" {% if selected_category == 'Ellen G. White' %}selected{% endif %}>Ellen G. White</option><option value="Bible" {% if selected_category == 'Bible' %}selected{% endif %}>Bible</option><option value="SDA Hymns" {% if selected_category == 'SDA Hymns' %}selected{% endif %}>SDA Hymns</option><option value="Nyingine" {% if selected_category == 'Nyingine' %}selected{% endif %}>Nyingine</option></select></div>
+    <div class="col-md-4"><select name="language" class="form-select"><option value="all">Lugha zote</option><option value="Kiswahili" {% if selected_language == 'Kiswahili' %}selected{% endif %}>Kiswahili</option><option value="English" {% if selected_language == 'English' %}selected{% endif %}>English</option></select></div>
+    <div class="col-md-3"><button class="btn btn-navy w-100" type="submit"><i class="bi bi-funnel"></i> Chuja</button></div>
+</form>
+
+<div class="card-tucasa p-4">
+    <table class="table table-tucasa align-middle mb-0">
+        <thead>
+            <tr><th>Kitabu/Nyaraka</th><th>Kategoria</th><th>Lugha</th><th></th></tr>
+        </thead>
+        <tbody>
+        {% for doc in documents %}
+            <tr>
+                <td><i class="bi bi-book text-primary me-2"></i>{{ doc.title }}{% if doc.author %}<small class="d-block text-muted ms-4">{{ doc.author }}</small>{% endif %}</td>
+                <td>{{ doc.category }}</td>
+                <td>{{ doc.language }}</td>
+                <td class="text-end">{% if doc.file_path %}<a class="btn btn-sm btn-outline-secondary" href="{{ url_for('static', filename=doc.file_path) }}" target="_blank"><i class="bi bi-download"></i> Pakua</a>{% elif doc.resource_url %}<a class="btn btn-sm btn-outline-secondary" href="{{ doc.resource_url }}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Fungua</a>{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="text-muted small mt-3">Rasilimali zinasimamiwa na Admin Panel.</p>
+{% endblock %}

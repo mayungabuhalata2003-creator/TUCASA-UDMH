@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Wanachama - Admin{% endblock %}
+{% block content %}
+<h3 class="page-heading">Wanachama Wote</h3>
+<p class="page-subtext">Jumla ya wanachama: {{ members|length }}</p>
+
+<form method="GET" class="mb-3 d-flex" style="max-width:400px;">
+    <input type="text" name="q" value="{{ search }}" class="form-control me-2" placeholder="Tafuta kwa jina, email, hostel...">
+    <button class="btn btn-navy"><i class="bi bi-search"></i></button>
+</form>
+
+<div class="card-tucasa p-0">
+    <div class="table-responsive">
+    <table class="table table-tucasa align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Jina</th><th>Jinsia</th><th>Mwaka</th><th>Kozi</th><th>Simu</th><th>Hostel</th><th>WhatsApp</th><th>Tarehe</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for m in members %}
+            <tr>
+                <td>{{ m.jina }}</td>
+                <td>{{ m.jinsia }}</td>
+                <td>{{ m.mwaka }}</td>
+                <td>{{ m.kozi }}</td>
+                <td>{{ m.simu }}</td>
+                <td>{{ m.hostel }}</td>
+                <td>
+                    {% if m.kukubali_whatsapp %}
+                        <span class="badge badge-whatsapp">Ndiyo</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Hapana</span>
+                    {% endif %}
+                </td>
+                <td>{{ m.tarehe.strftime('%d %b %Y') }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('admin.delete_member', member_id=m.id) }}" onsubmit="return confirm('Una uhakika unataka kumfuta {{ m.jina }}?');">
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="9" class="text-center text-muted py-4">Hakuna wanachama waliopatikana.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

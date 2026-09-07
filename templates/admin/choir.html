@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Dashboard ya Kwaya - TUCASA{% endblock %}
+{% block content %}
+<h3 class="page-heading">Dashboard ya Kwaya</h3>
+<p class="page-subtext">Picha za tukio, machapisho na taarifa za huduma za kwaya kwenye sehemu moja.</p>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card navy">
+            <i class="bi bi-camera"></i>
+            <div class="stat-value">{{ total_events }}</div>
+            <div class="stat-label">Matukio ya Kwaya</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card green">
+            <i class="bi bi-journal-text"></i>
+            <div class="stat-value">{{ total_publications }}</div>
+            <div class="stat-label">Machapisho</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card blue">
+            <i class="bi bi-music-note-beamed"></i>
+            <div class="stat-value">{{ total_media }}</div>
+            <div class="stat-label">Media ya Kwaya</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card-tucasa p-4">
+            <h5 class="fw-bold mb-3">Matukio ya Hivi Karibuni</h5>
+            {% if recent_events %}
+                <ul class="list-group list-group-flush">
+                    {% for event in recent_events %}
+                        <li class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>{{ event.title }}</strong>
+                                <small class="text-muted">{{ event.event_date.strftime('%d %b %Y') if event.event_date else 'Tarehe haijafahamika' }}</small>
+                            </div>
+                            <p class="mb-0 small text-muted">{{ event.description[:120] }}{% if event.description|length > 120 %}...{% endif %}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted mb-0">Hakuna tukio lililosajiliwa bado.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card-tucasa p-4">
+            <h5 class="fw-bold mb-3">Machapisho ya Hivi Karibuni</h5>
+            {% if recent_publications %}
+                <ul class="list-group list-group-flush">
+                    {% for pub in recent_publications %}
+                        <li class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ pub.title }}</strong>
+                                <small class="text-muted">{{ pub.created_at.strftime('%d %b %Y') }}</small>
+                            </div>
+                            <p class="mb-0 small text-muted">{{ pub.author or 'Mwandishi hafahamiki' }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted mb-0">Hakuna machapisho yaliyoongezwa bado.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card-tucasa p-4">
+            <h5 class="fw-bold mb-3">Media ya Hivi Karibuni</h5>
+            {% if recent_media %}
+                <ul class="list-group list-group-flush">
+                    {% for item in recent_media %}
+                        <li class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ item.title }}</strong>
+                                <small class="text-muted text-uppercase">{{ item.media_type }}</small>
+                            </div>
+                            <p class="mb-0 small text-muted">{{ item.description or 'Hakuna maelezo' }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted mb-0">Hakuna media ya kwaya iliyowekwa bado.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

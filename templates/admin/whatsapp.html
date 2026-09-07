@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}WhatsApp Broadcast - Admin{% endblock %}
+{% block content %}
+<h3 class="page-heading">Tuma Ujumbe wa WhatsApp</h3>
+<p class="page-subtext">Andika ujumbe utakaotumwa kwa wanachama walioruhusu kupokea ujumbe wa WhatsApp.</p>
+
+<div class="card-tucasa p-4 mb-4" style="max-width:600px;">
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.message.label(class="form-label") }}
+            {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""), rows="4", placeholder="Andika ujumbe wako hapa...") }}
+            {% for error in form.message.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+        {{ form.submit(class="btn text-white w-100", style="background:#25D366;") }}
+    </form>
+</div>
+
+{% if links %}
+<div class="card-tucasa p-0">
+    <div class="table-responsive">
+    <table class="table table-tucasa align-middle mb-0">
+        <thead><tr><th>Jina</th><th>Simu</th><th></th></tr></thead>
+        <tbody>
+        {% for l in links %}
+            <tr>
+                <td>{{ l.jina }}</td>
+                <td>{{ l.simu }}</td>
+                <td>
+                    <a href="{{ l.link }}" target="_blank" rel="noopener" class="btn btn-sm text-white" style="background:#25D366;">
+                        <i class="bi bi-whatsapp"></i> Tuma via WhatsApp
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

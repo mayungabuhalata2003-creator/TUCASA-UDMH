@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Chat ya Wanachama - TUCASA{% endblock %}
+{% block content %}
+<div class="page-heading-row">
+    <div>
+        <p class="page-kicker">Jumuiya ya TUCASA</p>
+        <h3 class="page-heading mb-1">Chat ya Wanachama</h3>
+        <p class="page-subtext mb-0">Wasiliana na wanachama wengine ndani ya tovuti.</p>
+    </div>
+    <span class="chat-online-badge"><i class="bi bi-shield-check"></i> Wanachama walioingia</span>
+</div>
+
+<div class="chat-layout">
+    <section class="card-tucasa chat-panel">
+        <div class="chat-panel-header">
+            <div>
+                <h5 class="mb-1">Mazungumzo ya pamoja</h5>
+                <small class="text-muted">Ujumbe huhifadhiwa kwa siku 2 kisha husafishwa kiotomatiki</small>
+            </div>
+            <i class="bi bi-chat-square-text chat-panel-icon"></i>
+        </div>
+
+        <div class="chat-messages" aria-live="polite">
+            {% for item in messages %}
+            <article class="chat-message {% if item.sender_id == current_user.id %}chat-message-own{% endif %}">
+                <div class="chat-avatar" title="{{ item.sender.jina }}" aria-label="Ujumbe umetumwa na {{ item.sender.jina }}">
+                    <i class="bi {% if item.sender_id == current_user.id %}bi-person-check-fill{% else %}bi-person-fill{% endif %}"></i>
+                </div>
+                <div class="chat-bubble-wrap">
+                    <div class="chat-message-meta">
+                        <strong>{{ item.sender.jina }}</strong>
+                        <time datetime="{{ item.created_at.isoformat() }}">{{ item.created_at.strftime('%d/%m/%Y %H:%M') }}</time>
+                    </div>
+                    <p class="chat-bubble">{{ item.message }}</p>
+                </div>
+            </article>
+            {% else %}
+            <div class="chat-empty-state">
+                <i class="bi bi-chat-heart"></i>
+                <p class="mb-0">Hakuna ujumbe bado. Anza mazungumzo.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if pagination.pages > 1 %}
+        <div class="chat-pagination">
+            {% if pagination.has_prev %}
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.chat', page=pagination.prev_num) }}">
+                    <i class="bi bi-arrow-left"></i> Mpya zaidi
+                </a>
+            {% endif %}
+            <span>Ukurasa {{ pagination.page }} / {{ pagination.pages }}</span>
+            {% if pagination.has_next %}
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.chat', page=pagination.next_num) }}">
+                    Za zamani <i class="bi bi-arrow-right"></i>
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="chat-composer">
+            {{ form.hidden_tag() }}
+            {{ form.message(class_='form-control' + (' is-invalid' if form.message.errors else '')) }}
+            {% for error in form.message.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            <button type="submit" class="btn btn-tucasa-primary chat-send-button" title="Tuma ujumbe">
+                <i class="bi bi-send-fill"></i><span>Tuma</span>
+            </button>
+        </form>
+    </section>
+</div>
+{% endblock %}

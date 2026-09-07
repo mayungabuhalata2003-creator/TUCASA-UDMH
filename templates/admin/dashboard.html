@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel - TUMH{% endblock %}
+{% block content %}
+<div class="admin-panel-hero">
+    <div>
+        <span class="admin-panel-kicker">Uongozi wa TUCASA UDSM MABIBO HOSTEL</span>
+        <h3 class="page-heading admin-panel-title">Admin Panel</h3>
+        <p class="page-subtext admin-panel-text">Karibu kwenye dashibodi ya usimamizi wa TUCASA UDSM MABIBO HOSTEL. Hapa unaweza kudhibiti wanachama, matangazo, media, ibada na mipangilio ya mfumo.</p>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card navy">
+            <i class="bi bi-people"></i>
+            <div class="stat-value">{{ total_members }}</div>
+            <div class="stat-label">Wanachama Wote</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card green">
+            <i class="bi bi-megaphone"></i>
+            <div class="stat-value">{{ total_announcements }}</div>
+            <div class="stat-label">Matangazo</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card blue">
+            <i class="bi bi-envelope"></i>
+            <div class="stat-value">{{ total_messages }}</div>
+            <div class="stat-label">Ujumbe wa Wasiliana Nasi</div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-action-group mb-4">
+    <div class="admin-group-header">
+        <h5>Usimamizi wa Wanachama</h5>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-3"><a href="{{ url_for('admin.members') }}" class="admin-action-card navy"><i class="bi bi-people"></i><span>Wanachama</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.announcements') }}" class="admin-action-card green"><i class="bi bi-megaphone"></i><span>Matangazo</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.whatsapp') }}" class="admin-action-card whatsapp"><i class="bi bi-whatsapp"></i><span>WhatsApp</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.messages') }}" class="admin-action-card secondary"><i class="bi bi-envelope"></i><span>Ujumbe</span></a></div>
+    </div>
+</div>
+
+<div class="admin-action-group mb-4">
+    <div class="admin-group-header">
+        <h5>Programu na Media</h5>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-3"><a href="{{ url_for('admin.event_posts') }}" class="admin-action-card blue"><i class="bi bi-camera"></i><span>Picha & Matukio</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.manage_publications') }}" class="admin-action-card success"><i class="bi bi-journal-text"></i><span>Machapisho</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.choir_media') }}" class="admin-action-card warning"><i class="bi bi-music-note-beamed"></i><span>Kwaya Media</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.choir_dashboard') }}" class="admin-action-card dark"><i class="bi bi-grid-1x2-fill"></i><span>Dashboard ya Kwaya</span></a></div>
+    </div>
+</div>
+
+<div class="admin-action-group mb-4">
+    <div class="admin-group-header">
+        <h5>Mipangilio ya Mfumo</h5>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-3"><a href="{{ url_for('admin.settings') }}" class="admin-action-card secondary"><i class="bi bi-gear"></i><span>Mipangilio</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.logo') }}" class="admin-action-card secondary"><i class="bi bi-image"></i><span>Nembo</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.library') }}" class="admin-action-card secondary"><i class="bi bi-book"></i><span>Library</span></a></div>
+        <div class="col-md-3"><a href="{{ url_for('admin.worship_schedule') }}" class="admin-action-card secondary"><i class="bi bi-calendar-week"></i><span>Ratiba</span></a></div>
+    </div>
+</div>
+
+<div class="admin-action-group mb-4">
+    <div class="admin-group-header">
+        <h5>Viongozi na Utawala</h5>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-3"><a href="{{ url_for('admin.leaders') }}" class="admin-action-card secondary"><i class="bi bi-person-badge"></i><span>Viongozi</span></a></div>
+    </div>
+</div>
+
+<div class="card-tucasa p-4">
+    <h5 class="fw-bold mb-3">Wanachama Wapya</h5>
+    {% if recent_members %}
+    <table class="table table-tucasa align-middle mb-0">
+        <thead><tr><th>Jina</th><th>Hostel</th><th>Kozi</th><th>Tarehe</th></tr></thead>
+        <tbody>
+        {% for m in recent_members %}
+            <tr>
+                <td>{{ m.jina }}</td>
+                <td>{{ m.hostel }}</td>
+                <td>{{ m.kozi }}</td>
+                <td>{{ m.tarehe.strftime('%d %b %Y') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-muted mb-0">Hakuna wanachama waliosajiliwa bado.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Machapisho - TUCASA{% endblock %}
+{% block content %}
+<h3 class="page-heading">Machapisho</h3>
+<p class="page-subtext">Makala na machapisho ya kiroho kutoka kwa wanachama na viongozi.</p>
+
+<div class="row g-3">
+    {% for pub in publications %}
+    <div class="col-md-6">
+        <div class="card-tucasa p-3 h-100">
+            <h6 class="fw-bold mb-1"><i class="bi bi-journal-richtext me-2" style="color:#1fa96e;"></i>{{ pub.title }}</h6>
+            <p class="text-muted small mb-2">{{ pub.author or 'Mwandishi hafahamiki' }}</p>
+            {% if pub.summary %}
+                <p class="small mb-2">{{ pub.summary }}</p>
+            {% endif %}
+            {% if pub.file_path %}
+                <a href="{{ url_for('static', filename=pub.file_path) }}" target="_blank" class="btn btn-sm btn-outline-success">Fungua Faili</a>
+            {% elif pub.resource_url %}
+                <a href="{{ pub.resource_url }}" target="_blank" class="btn btn-sm btn-outline-primary">Fungua Kiungo</a>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-light border">Hakuna machapisho yaliyochapishwa kwa sasa.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

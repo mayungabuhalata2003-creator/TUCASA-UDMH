@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}TUCASA UDSM MABIBO HOSTEL{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<meta name="theme-color" content="#0b1f3a">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% if current_user.is_authenticated %}
+<div class="app-wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            {% if site_logo %}
+                <img src="{{ url_for('static', filename=site_logo) }}" alt="{{ assoc_name }} Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover;box-shadow:0 8px 18px rgba(0,0,0,.18);">
+            {% else %}
+                <div class="brand-icon"><i class="bi bi-cross"></i></div>
+            {% endif %}
+            <span>{{ assoc_name }}</span>
+        </div>
+        <div class="sidebar-sub">{{ hostel_name }}</div>
+
+        <ul class="sidebar-nav">
+            <li><a href="{{ url_for('main.dashboard') }}" class="{{ 'active' if request.endpoint == 'main.dashboard' }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li><a href="{{ url_for('member.register') }}" class="{{ 'active' if request.endpoint == 'member.register' }}"><i class="bi bi-person-plus"></i> Usajili wa Wanachama</a></li>
+            <li><a href="{{ url_for('main.about') }}" class="{{ 'active' if request.endpoint == 'main.about' }}"><i class="bi bi-info-circle"></i> Kuhusu TUCASA</a></li>
+            <li><a href="{{ url_for('main.leadership') }}" class="{{ 'active' if request.endpoint == 'main.leadership' }}"><i class="bi bi-people"></i> Uongozi</a></li>
+            <li><a href="{{ url_for('main.library') }}" class="{{ 'active' if request.endpoint == 'main.library' }}"><i class="bi bi-book"></i> Library</a></li>
+            <li><a href="{{ url_for('main.kwaya') }}" class="{{ 'active' if request.endpoint == 'main.kwaya' }}"><i class="bi bi-music-note-beamed"></i> Kwaya</a></li>
+            <li><a href="{{ url_for('main.events') }}" class="{{ 'active' if request.endpoint == 'main.events' }}"><i class="bi bi-images"></i> Matukio na Picha</a></li>
+            <li><a href="{{ url_for('main.announcements') }}" class="{{ 'active' if request.endpoint == 'main.announcements' }}"><i class="bi bi-megaphone"></i> Matangazo</a></li>
+            <li><a href="{{ url_for('main.worship') }}" class="{{ 'active' if request.endpoint == 'main.worship' }}"><i class="bi bi-calendar-week"></i> Ratiba za Ibada</a></li>
+            <li><a href="{{ url_for('main.contact') }}" class="{{ 'active' if request.endpoint == 'main.contact' }}"><i class="bi bi-envelope"></i> Wasiliana Nasi</a></li>
+            <li><a href="{{ url_for('main.chat') }}" class="{{ 'active' if request.endpoint == 'main.chat' }}"><i class="bi bi-chat-dots"></i> Chat ya Wanachama</a></li>
+            {% if current_user.is_admin %}
+            <li class="sidebar-divider"></li>
+            <li><a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.blueprint == 'admin' }}"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
+            {% endif %}
+        </ul>
+
+        <div class="sidebar-footer">
+            <button type="button" class="install-app-btn" id="installAppBtn" hidden>
+                <i class="bi bi-download"></i> Install App
+            </button>
+            <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Toka (Logout)</a>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <div class="topbar d-flex d-lg-none">
+            <button class="btn btn-sm btn-outline-secondary" id="sidebarToggle"><i class="bi bi-list"></i></button>
+            <div class="topbar-stack">
+                <span class="topbar-mission">SOUTHERN TANZANIA UNION MISSION</span>
+                <span class="topbar-title">TUCASA UDSM Mabibo Hostel</span>
+            </div>
+        </div>
+        <div class="content-inner">
+            {% include "_flash_messages.html" %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% else %}
+    {% include "_flash_messages.html" %}
+    <div class="pwa-install-banner" id="pwaInstallBanner" hidden>
+        <div>
+            <strong><i class="bi bi-phone-fill me-1"></i> Sakinisha TUCASA App</strong>
+            <small>Fungua mfumo moja kwa moja kama app kwenye simu yako.</small>
+        </div>
+        <button type="button" class="btn btn-sm btn-tucasa-primary" id="installAppBtn">
+            <i class="bi bi-download"></i> Install
+        </button>
+        <button type="button" class="pwa-install-close" id="closeInstallBanner" aria-label="Funga ujumbe wa install">&times;</button>
+    </div>
+    {% block content_public %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

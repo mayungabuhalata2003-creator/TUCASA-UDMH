@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Kwaya Media - TUMHs{% endblock %}
+{% block content %}
+<h3 class="page-heading">Media ya Kwaya</h3>
+<p class="page-subtext">Pakia nyimbo, audio, video, PDF na nyaraka za kwaya kwa waumini.</p>
+
+<div class="card-tucasa p-4 mb-4">
+    <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ form.title.label(class_='form-label') }}
+                {{ form.title(class_='form-control') }}
+            </div>
+            <div class="col-md-6">
+                {{ form.media_type.label(class_='form-label') }}
+                {{ form.media_type(class_='form-select') }}
+            </div>
+            <div class="col-12">
+                {{ form.description.label(class_='form-label') }}
+                {{ form.description(class_='form-control', rows=4) }}
+            </div>
+            <div class="col-md-6">
+                {{ form.external_url.label(class_='form-label') }}
+                {{ form.external_url(class_='form-control') }}
+            </div>
+            <div class="col-md-6">
+                {{ form.file.label(class_='form-label') }}
+                {{ form.file(class_='form-control') }}
+            </div>
+            <div class="col-12">
+                {{ form.submit(class_='btn btn-warning') }}
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="card-tucasa p-4">
+    <h5 class="fw-bold mb-3">Orodha ya Media</h5>
+    {% if media_items %}
+    <div class="table-responsive">
+        <table class="table table-tucasa align-middle">
+            <thead>
+                <tr>
+                    <th>Jina</th>
+                    <th>Aina</th>
+                    <th>Maelezo</th>
+                    <th>Link / Faili</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in media_items %}
+                <tr>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.media_type }}</td>
+                    <td>{{ item.description[:80] if item.description else '-' }}{% if item.description and item.description|length > 80 %}...{% endif %}</td>
+                    <td>
+                        {% if item.file_path %}
+                            <a href="{{ url_for('static', filename=item.file_path) }}" target="_blank">Open</a>
+                        {% elif item.external_url %}
+                            <a href="{{ item.external_url }}" target="_blank">Link</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin.delete_choir_media', media_id=item.id) }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Unataka kufuta media hii?')">Futa</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="text-muted mb-0">Hakuna media ya kwaya iliyowekwa bado.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Ratiba za Ibada - TUMH{% endblock %}
+{% block content %}
+<h3 class="page-heading">Ratiba za Ibada</h3>
+<p class="page-subtext">Ratiba ya ibada na maombi TUMH</p>
+
+<form class="d-flex gap-2 mb-4" method="get"><select name="year" class="form-select" style="max-width:220px">{% for year in years %}<option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>{% endfor %}</select><button class="btn btn-navy" type="submit"><i class="bi bi-search"></i> Angalia</button></form>
+
+<div class="card-tucasa p-4">
+    <table class="table table-tucasa align-middle mb-0">
+        <thead>
+            <tr><th>Siku</th><th>Muda</th><th>Shughuli</th></tr>
+        </thead>
+        <tbody>
+        {% for item in schedule %}
+            <tr>
+                <td class="fw-semibold">{{ item.day }}</td>
+                <td>{{ item.time }}</td>
+                <td>{{ item.activity }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

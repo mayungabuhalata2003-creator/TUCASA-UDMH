@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Hariri Kiongozi - TUMH{% endblock %}
+{% block content %}
+<h3 class="page-heading">Hariri Taarifa za Kiongozi</h3>
+<div class="card-tucasa p-4" style="max-width:620px"><form method="post" enctype="multipart/form-data">{{ form.hidden_tag() }}<div class="mb-3">{{ form.year.label(class="form-label") }}{{ form.year(class="form-control") }}</div><div class="mb-3">{{ form.name.label(class="form-label") }}{{ form.name(class="form-control") }}</div><div class="mb-3">{{ form.position.label(class="form-label") }}{{ form.position(class="form-control") }}</div><div class="mb-3">{{ form.photo.label(class="form-label") }}{{ form.photo(class="form-control", accept=".png,.jpg,.jpeg,.webp") }}</div>{{ form.submit(class="btn btn-green") }} <a class="btn btn-outline-secondary" href="{{ url_for('admin.leaders') }}">Rudi</a></form></div>
+{% endblock %}

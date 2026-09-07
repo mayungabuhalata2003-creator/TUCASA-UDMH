@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Ujumbe - Admin{% endblock %}
+{% block content %}
+<h3 class="page-heading">Ujumbe wa Wasiliana Nasi</h3>
+<p class="page-subtext">Ujumbe uliotumwa na wanachama kupitia fomu ya Wasiliana Nasi.</p>
+
+<div class="card-tucasa p-0">
+    <div class="table-responsive">
+    <table class="table table-tucasa align-middle mb-0">
+        <thead><tr><th>Jina</th><th>Barua Pepe</th><th>Ujumbe</th><th>Tarehe</th></tr></thead>
+        <tbody>
+        {% for m in messages %}
+            <tr>
+                <td>{{ m.jina }}</td>
+                <td>{{ m.email }}</td>
+                <td>{{ m.ujumbe }}</td>
+                <td>{{ m.tarehe.strftime('%d %b %Y, %H:%M') }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-4">Hakuna ujumbe bado.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

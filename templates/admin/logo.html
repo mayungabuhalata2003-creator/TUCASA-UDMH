@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Nembo - Admin{% endblock %}
+{% block content %}
+<h3 class="page-heading">Pakia Nembo (Logo)</h3>
+<p class="page-subtext">Nembo hii itaonekana kwenye sidebar na ukurasa wa mwanzo.</p>
+
+<div class="card-tucasa p-4" style="max-width:500px;">
+    {% if current_logo %}
+        <p class="fw-semibold mb-2">Nembo ya Sasa:</p>
+        <img src="{{ url_for('static', filename=current_logo) }}" class="logo-preview mb-4" alt="Current logo">
+    {% else %}
+        <p class="text-muted">Hakuna nembo iliyopakiwa bado.</p>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.logo.label(class="form-label") }}
+            {{ form.logo(class="form-control" + (" is-invalid" if form.logo.errors else "")) }}
+            {% for error in form.logo.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            <div class="form-text">PNG, JPG, JPEG, GIF au WEBP. Upeo wa 2MB.</div>
+        </div>
+        {{ form.submit(class="btn btn-navy btn") }}
+    </form>
+</div>
+{% endblock %}

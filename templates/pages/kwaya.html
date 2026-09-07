@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Kwaya - TUMH{% endblock %}
+{% block content %}
+<div class="kwaya-hero">
+    <div class="kwaya-hero-content">
+        <span class="kwaya-eyebrow">Kwaya ya TUMH</span>
+        <h3>Furaha, ibada na moyo wa kuimba kwa kila mmoja.</h3>
+        <p>Furahia nyimbo, video, matukio, na machapisho ya kwaya yanayoelekeza maisha ya ibada na umoja wa kanisa.</p>
+        <div class="kwaya-actions">
+            <a href="#matukio-kwaya" class="btn btn-tucasa-primary">Tazama matukio</a>
+            <a href="#media-kwaya" class="btn btn-tucasa-outline btn-light-outline">Media ya kwaya</a>
+        </div>
+    </div>
+
+    <div class="kwaya-hero-panel card-tucasa">
+        <div class="kwaya-mini-stat">
+            <span class="icon"><i class="bi bi-calendar-event"></i></span>
+            <div>
+                <strong>{{ events|length }}</strong>
+                <small>Matukio</small>
+            </div>
+        </div>
+        <div class="kwaya-mini-stat">
+            <span class="icon"><i class="bi bi-music-note-beamed"></i></span>
+            <div>
+                <strong>{{ media_items|length }}</strong>
+                <small>Media</small>
+            </div>
+        </div>
+        <div class="kwaya-mini-stat">
+            <span class="icon"><i class="bi bi-journal-text"></i></span>
+            <div>
+                <strong>{{ publications|length }}</strong>
+                <small>Machapisho</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-6" id="matukio-kwaya">
+        <div class="card-tucasa kwaya-card">
+            <div class="section-header">
+                <h5>Matukio ya Kwaya</h5>
+                <span class="section-pill"><i class="bi bi-camera-video"></i> Live</span>
+            </div>
+
+            {% if events %}
+                {% for event in events %}
+                    <div class="kwaya-item">
+                        <div class="kwaya-item-top">
+                            <h6>{{ event.title }}</h6>
+                            <span>{{ event.event_date.strftime('%d %b %Y') if event.event_date else 'Tarehe' }}</span>
+                        </div>
+                        <p>{{ event.description }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">Hakuna matukio ya kwaya kwa sasa.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-6" id="media-kwaya">
+        <div class="card-tucasa kwaya-card">
+            <div class="section-header">
+                <h5>Media ya Kwaya</h5>
+                <span class="section-pill"><i class="bi bi-music-note-list"></i> Audio</span>
+            </div>
+
+            {% if media_items %}
+                {% for item in media_items %}
+                    <div class="kwaya-item">
+                        <div class="kwaya-item-top">
+                            <h6>{{ item.title }}</h6>
+                            <span class="media-badge">{{ item.media_type }}</span>
+                        </div>
+                        {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+                        {% if item.file_path %}
+                            <a href="{{ url_for('static', filename=item.file_path) }}" target="_blank" class="mini-link">Fungua media</a>
+                        {% elif item.external_url %}
+                            <a href="{{ item.external_url }}" target="_blank" class="mini-link">Fungua link</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">Hakuna media ya kwaya iliyowekwa.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card-tucasa kwaya-card mt-4">
+    <div class="section-header">
+        <h5>Machapisho ya Kwaya</h5>
+        <span class="section-pill"><i class="bi bi-file-earmark-text"></i> PDF</span>
+    </div>
+
+    {% if publications %}
+        <div class="row g-3">
+            {% for pub in publications %}
+            <div class="col-md-6">
+                <div class="publication-box">
+                    <h6>{{ pub.title }}</h6>
+                    <p class="pub-author">{{ pub.author or 'Mwandishi hafahamiki' }}</p>
+                    {% if pub.summary %}<p>{{ pub.summary }}</p>{% endif %}
+                    {% if pub.file_path %}
+                        <a href="{{ url_for('static', filename=pub.file_path) }}" target="_blank" class="mini-link success">Fungua faili</a>
+                    {% elif pub.resource_url %}
+                        <a href="{{ pub.resource_url }}" target="_blank" class="mini-link success">Fungua link</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">Hakuna machapisho ya kwaya kwa sasa.</p>
+    {% endif %}
+</div>
+{% endblock %}

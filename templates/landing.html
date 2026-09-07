@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}TUCASA UDSM Mabibo Hostel - Karibu{% endblock %}
+{% block content_public %}
+<div class="landing-hero">
+    <!-- Sehemu ya Juu (Navigation/Header) bila maneno yanayojirudia -->
+    <div class="landing-nav">
+        <div class="brand d-flex align-items-center gap-3">
+            {% if site_logo %}
+                <img src="{{ url_for('static', filename=site_logo) }}" alt="Logo" style="width:52px;height:52px;border-radius:12px;object-fit:cover;box-shadow:0 8px 18px rgba(0,0,0,.18);">
+            {% else %}
+                <div class="icon-badge"><i class="bi bi-cross"></i></div>
+            {% endif %}
+            <div>
+                <div class="small text-uppercase fw-bold text-white-50" style="font-size: 11px; letter-spacing: .12em;">TANZANIA UNIVERSITIES AND COLLEGES ADVENTIST STUDENT ASSOCIATION(TUCASA)</div>
+                <div class="small text-uppercase fw-bold text-white-50" style="font-size: 10px; letter-spacing: .12em;">SOUTHERN TANZANIA UNION MISSION (STUM)</div>
+                <div class="small text-uppercase fw-bold text-white-50" style="font-size: 9px; letter-spacing: .12em; margin-top: 2px;">SOUTHERN EAST CONFERENCE (SEC)</div>
+            </div>
+        </div>
+    </div> <!-- landing-nav imefungwa hapa -->
+        
+    <!-- Sehemu kuu yenye kichwa cha habari kikubwa pekee -->
+    <div class="landing-hero-body mt-5">
+        <div class="container">
+            <div class="row w-100 align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold">TUCASA UDSM <br><span class="highlight text-success">MAABIBO HOSTEL(TUMH)</span></h1>
+                    <p class="lead-text my-4 text-white-50">Mfumo rasmi wa TUCASA Chuo Kikuu cha Dar es Salaam, Mabibo Hostel. Jiunge na jumuiya ya kiroho, shiriki matukio, na pata taarifa zote</p>
+                    <div class="landing-cta d-flex gap-3">
+                        <a href="{{ url_for('auth.signup') }}" class="btn-tucasa-primary btn px-4 py-2">Jisajili Sasa <i class="bi bi-arrow-right"></i></a>
+                        <a href="{{ url_for('auth.login') }}" class="btn-tucasa-outline btn px-4 py-2">Ingia kwenye Akaunti</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

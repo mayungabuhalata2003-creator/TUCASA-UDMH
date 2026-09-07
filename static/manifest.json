@@ -1,0 +1,18 @@
+{
+  "name": "TUCASA UDSM Mabibo Hostel",
+  "short_name": "TUCASA UDSM",
+  "lang": "sw",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#0b1f3a",
+  "description": "Mfumo rasmi wa TUCASA UDSM Mabibo Hostel.",
+  "icons": [
+    {
+      "src": "/static/uploads/logo/f8859876587b47a494e8428fe3377690.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

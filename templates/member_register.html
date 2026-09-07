@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Usajili wa Wanachama - TUMH{% endblock %}
+{% block content %}
+<div class="registration-heading">
+    <div>
+        <p class="page-kicker">Jumuiya ya TUCASA</p>
+        <h3 class="page-heading">Usajili wa Wanachama</h3>
+        <p class="page-subtext">Jaza fomu hii kujiunga rasmi kama mwanachama wa TUCASA UDSM Mabibo Hostel.</p>
+    </div>
+    <div class="registration-heading-icon"><i class="bi bi-person-vcard-fill"></i></div>
+</div>
+
+<div class="registration-card card-tucasa">
+    <div class="registration-card-header">
+        <div class="registration-card-mark"><i class="bi bi-person-plus-fill"></i></div>
+        <div>
+            <h5 class="mb-1">Taarifa za Mwanachama</h5>
+            <p class="mb-0">Taarifa zako zitatumika kwa huduma za jumuiya.</p>
+        </div>
+    </div>
+    <div class="registration-card-body">
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ form.jina.label(class="form-label") }}
+                {{ form.jina(class="form-control" + (" is-invalid" if form.jina.errors else "")) }}
+                {% for error in form.jina.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+                {{ form.jinsia.label(class="form-label") }}
+                {{ form.jinsia(class="form-select" + (" is-invalid" if form.jinsia.errors else "")) }}
+                {% for error in form.jinsia.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+                {{ form.mwaka.label(class="form-label") }}
+                {{ form.mwaka(class="form-select" + (" is-invalid" if form.mwaka.errors else "")) }}
+                {% for error in form.mwaka.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+                {{ form.kozi.label(class="form-label") }}
+                {{ form.kozi(class="form-control" + (" is-invalid" if form.kozi.errors else "")) }}
+                {% for error in form.kozi.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+                {{ form.simu.label(class="form-label") }}
+                {{ form.simu(class="form-control" + (" is-invalid" if form.simu.errors else ""), placeholder="0712 345 678") }}
+                {% for error in form.simu.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                {% for error in form.email.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+                {{ form.hostel.label(class="form-label") }}
+                {{ form.hostel(class="form-control" + (" is-invalid" if form.hostel.errors else ""), value=(form.hostel.data or "Mabibo Hostel")) }}
+                {% for error in form.hostel.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+                {{ form.tarehe_ya_kuzaliwa.label(class="form-label") }}
+                {{ form.tarehe_ya_kuzaliwa(class="form-control" + (" is-invalid" if form.tarehe_ya_kuzaliwa.errors else ""), type="date") }}
+                <small class="text-muted">Weka siku, mwezi na mwaka wa kuzaliwa.</small>
+                {% for error in form.tarehe_ya_kuzaliwa.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12">
+                {{ form.vipaji.label(class="form-label") }}
+                {{ form.vipaji(class="form-control" + (" is-invalid" if form.vipaji.errors else ""), rows="2", placeholder="Mfano: Kuimba, Kucheza gitaa, Kuhubiri...") }}
+                {% for error in form.vipaji.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12 form-check ms-1 mt-2">
+                {{ form.kukubali_whatsapp(class="form-check-input") }}
+                {{ form.kukubali_whatsapp.label(class="form-check-label") }}
+            </div>
+        </div>
+        {{ form.submit(class="btn btn-green btn mt-4 px-4") }}
+    </form>
+    </div>
+</div>
+{% endblock %}
