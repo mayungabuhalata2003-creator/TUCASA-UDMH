@@ -50,6 +50,7 @@
                     <p class="small text-muted mb-2">{{ event.event_date.strftime('%d %b %Y') if event.event_date else 'Tarehe haijafahamika' }}</p>
                     <p class="small mb-3">{{ event.description[:120] }}{% if event.description|length > 120 %}...{% endif %}</p>
                     <form method="post" action="{{ url_for('admin.delete_event_post', event_id=event.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Unataka kufuta tukio hili?')">Futa</button>
                     </form>
                 </div>

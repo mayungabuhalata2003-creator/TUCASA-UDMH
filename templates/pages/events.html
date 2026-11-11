@@ -8,12 +8,16 @@
     {% for event in events %}
     <div class="col-md-4">
         <div class="card-tucasa p-3 h-100">
-            <div class="d-flex align-items-center justify-content-center mb-3" style="height:140px;background:linear-gradient(135deg,#0b1f3a,#1e4fa3);border-radius:10px;">
-                <i class="bi bi-camera text-white" style="font-size:2rem;opacity:.6;"></i>
-            </div>
-            <h6 class="fw-bold">{{ event.jina }}</h6>
-            <p class="text-muted small mb-1"><i class="bi bi-calendar3"></i> {{ event.tarehe }}</p>
-            <p class="small mb-0">{{ event.maelezo }}</p>
+            {% if event.image_path %}
+                <img src="{{ url_for('static', filename=event.image_path) }}" alt="{{ event.title }}" class="img-fluid rounded mb-3" style="height:160px;object-fit:cover;width:100%;">
+            {% else %}
+                <div class="d-flex align-items-center justify-content-center mb-3" style="height:140px;background:linear-gradient(135deg,#0b1f3a,#1e4fa3);border-radius:10px;">
+                    <i class="bi bi-camera text-white" style="font-size:2rem;opacity:.6;"></i>
+                </div>
+            {% endif %}
+            <h6 class="fw-bold">{{ event.title }}</h6>
+            <p class="text-muted small mb-1"><i class="bi bi-calendar3"></i> {{ event.event_date.strftime('%d %b %Y') if event.event_date else 'Tarehe haijafahamika' }}</p>
+            <p class="small mb-0">{{ event.description }}</p>
         </div>
     </div>
     {% endfor %}

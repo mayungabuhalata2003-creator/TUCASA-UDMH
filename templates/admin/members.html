@@ -36,6 +36,7 @@
                 <td>{{ m.tarehe.strftime('%d %b %Y') }}</td>
                 <td>
                     <form method="POST" action="{{ url_for('admin.delete_member', member_id=m.id) }}" onsubmit="return confirm('Una uhakika unataka kumfuta {{ m.jina }}?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                     </form>
                 </td>

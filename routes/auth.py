@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 
@@ -52,7 +54,11 @@ def login():
         login_user(user)
         flash(f"Karibu tena, {user.jina}!", "success")
         next_page = request.args.get("next")
-        return redirect(next_page or url_for("main.dashboard"))
+        if next_page:
+            parsed = urlparse(next_page)
+            if parsed.scheme == "" and parsed.netloc == "":
+                return redirect(next_page)
+        return redirect(url_for("main.dashboard"))
 
     return render_template("auth/login.html", form=form)
 

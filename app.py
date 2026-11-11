@@ -87,28 +87,25 @@ def create_app(config_class=Config):
 
 
 def _create_default_admin(app):
-    """Create a default admin account on first run if none exists."""
+    """Create default admin only when no admin exists yet."""
     admin_exists = User.query.filter_by(role="admin").first()
-    if not admin_exists:
-        admin = User(
-            jina=app.config["DEFAULT_ADMIN_NAME"],
-            email=app.config["DEFAULT_ADMIN_EMAIL"],
-            role="admin",
-        )
-        admin.set_password(app.config["DEFAULT_ADMIN_PASSWORD"])
-        db.session.add(admin)
-        db.session.commit()
-        print("=" * 60)
-        print("Default admin account created:")
-        print(f"  Email:    {app.config['DEFAULT_ADMIN_EMAIL']}")
-        print(f"  Password: {app.config['DEFAULT_ADMIN_PASSWORD']}")
-        print("  Please change this password after first login!")
-        print("=" * 60)
-    else:
-        admin_exists.jina = app.config["DEFAULT_ADMIN_NAME"]
-        admin_exists.email = app.config["DEFAULT_ADMIN_EMAIL"]
-        admin_exists.set_password(app.config["DEFAULT_ADMIN_PASSWORD"])
-        db.session.commit()
+    if admin_exists:
+        return
+
+    admin = User(
+        jina=app.config["DEFAULT_ADMIN_NAME"],
+        email=app.config["DEFAULT_ADMIN_EMAIL"],
+        role="admin",
+    )
+    admin.set_password(app.config["DEFAULT_ADMIN_PASSWORD"])
+    db.session.add(admin)
+    db.session.commit()
+    print("=" * 60)
+    print("Default admin account created:")
+    print(f"  Email:    {app.config['DEFAULT_ADMIN_EMAIL']}")
+    print(f"  Password: {app.config['DEFAULT_ADMIN_PASSWORD']}")
+    print("  Please change this password after first login!")
+    print("=" * 60)
 
 
 def _upgrade_existing_schema():
@@ -153,4 +150,4 @@ def _create_default_content():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=False, host="0.0.0.0", port=5000)
