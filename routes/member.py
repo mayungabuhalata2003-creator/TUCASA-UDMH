@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from extensions import db
 from models import Member, Setting
-from forms import MemberRegistrationForm
+from forms import MemberRegistrationForm, MemberProfileForm
 
 member_bp = Blueprint("member", __name__)
 
@@ -22,6 +22,11 @@ def register():
         form.jina.data = current_user.jina
 
     if form.validate_on_submit():
+        email = form.email.data.lower().strip()
+        if Member.query.filter(db.func.lower(Member.email) == email).first():
+            flash("Barua pepe hii tayari imesajiliwa na mwanachama mwingine.", "danger")
+            return render_template("member_register.html", form=form)
+
         member = Member(
             user_id=current_user.id,
             jina=form.jina.data.strip(),
@@ -29,11 +34,13 @@ def register():
             mwaka=form.mwaka.data,
             kozi=form.kozi.data.strip(),
             simu=form.simu.data.strip(),
-            email=form.email.data.lower().strip(),
+            email=email,
             hostel=form.hostel.data.strip(),
             tarehe_ya_kuzaliwa=form.tarehe_ya_kuzaliwa.data,
             vipaji=form.vipaji.data.strip() if form.vipaji.data else "",
             kukubali_whatsapp=form.kukubali_whatsapp.data,
+            status="pending",
+            is_active=True,
         )
         db.session.add(member)
         db.session.commit()
@@ -43,8 +50,55 @@ def register():
     return render_template("member_register.html", form=form)
 
 
+@member_bp.route("/member/profile")
+@login_required
+def profile():
+    member = Member.query.filter_by(user_id=current_user.id).first()
+    if not member:
+        flash("Huna taarifa za mwanachama bado. Tafadhali jisajili kwanza.", "warning")
+        return redirect(url_for("member.register"))
+    return render_template("member_profile.html", member=member)
+
+
+@member_bp.route("/member/profile/edit", methods=["GET", "POST"])
+@login_required
+def edit_profile():
+    member = Member.query.filter_by(user_id=current_user.id).first()
+    if not member:
+        flash("Huna taarifa za mwanachama bado. Tafadhali jisajili kwanza.", "warning")
+        return redirect(url_for("member.register"))
+
+    form = MemberProfileForm(obj=member)
+    if form.validate_on_submit():
+        email = form.email.data.lower().strip()
+        if Member.query.filter(Member.email.ilike(email), Member.id != member.id).first():
+            flash("Barua pepe hii tayari imesajiliwa na mwanachama mwingine.", "danger")
+            return render_template("member_profile.html", form=form, member=member)
+
+        member.jina = form.jina.data.strip()
+        member.jinsia = form.jinsia.data
+        member.mwaka = form.mwaka.data
+        member.kozi = form.kozi.data.strip()
+        member.simu = form.simu.data.strip()
+        member.email = email
+        member.hostel = form.hostel.data.strip()
+        member.tarehe_ya_kuzaliwa = form.tarehe_ya_kuzaliwa.data
+        member.vipaji = form.vipaji.data.strip() if form.vipaji.data else ""
+        member.kukubali_whatsapp = form.kukubali_whatsapp.data
+        member.status = "pending" if member.status in (None, "") else member.status
+        member.updated_at = db.func.now()
+
+        db.session.commit()
+        flash("Taarifa zako zimebadilishwa.", "success")
+        return redirect(url_for("member.profile"))
+
+    return render_template("member_profile.html", form=form, member=member)
+
+
 @member_bp.route("/usajili/imefanikiwa")
 @login_required
 def success():
+    member = Member.query.filter_by(user_id=current_user.id).first()
     whatsapp_link = Setting.get("whatsapp_link", current_app.config["WHATSAPP_GROUP_LINK"])
-    return render_template("member_success.html", whatsapp_link=whatsapp_link)
+    return render_template("member_success.html", whatsapp_link=whatsapp_link, member=member)
+

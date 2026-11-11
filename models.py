@@ -39,11 +39,16 @@ class Member(db.Model):
     mwaka = db.Column(db.String(20), nullable=False)  # Year of study
     kozi = db.Column(db.String(150), nullable=False)  # Course
     simu = db.Column(db.String(20), nullable=False)  # Phone
-    email = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), nullable=False, index=True)
     hostel = db.Column(db.String(100), nullable=False)
     vipaji = db.Column(db.String(255), nullable=True)  # Talents
     tarehe_ya_kuzaliwa = db.Column(db.Date, nullable=True)
     kukubali_whatsapp = db.Column(db.Boolean, default=False)
+
+    status = db.Column(db.String(30), nullable=False, default="pending", index=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    photo_path = db.Column(db.String(500), nullable=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     tarehe = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship("User", backref="member_profile")
@@ -180,3 +185,4 @@ class Leader(db.Model):
     position = db.Column(db.String(150), nullable=False)
     photo_path = db.Column(db.String(500), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+

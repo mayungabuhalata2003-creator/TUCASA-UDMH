@@ -109,6 +109,17 @@ def _upgrade_existing_schema():
     if db.engine.dialect.name != "sqlite":
         return
     member_columns = {column["name"] for column in inspect(db.engine).get_columns("members")}
+    new_columns = {
+        "status": "ALTER TABLE members ADD COLUMN status VARCHAR(30) DEFAULT 'pending'",
+        "is_active": "ALTER TABLE members ADD COLUMN is_active BOOLEAN DEFAULT 1",
+        "photo_path": "ALTER TABLE members ADD COLUMN photo_path VARCHAR(500)",
+        "updated_at": "ALTER TABLE members ADD COLUMN updated_at DATETIME",
+    }
+    for name, sql in new_columns.items():
+        if name not in member_columns:
+            db.session.execute(text(sql))
+    db.session.commit()
+
     if "tarehe_ya_kuzaliwa" not in member_columns:
         db.session.execute(text("ALTER TABLE members ADD COLUMN tarehe_ya_kuzaliwa DATE"))
         db.session.commit()
@@ -148,3 +159,4 @@ app = create_app()
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=5000)
+

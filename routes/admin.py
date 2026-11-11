@@ -58,6 +58,18 @@ def members():
     return render_template("admin/members.html", members=all_members, search=search)
 
 
+@admin_bp.route("/wanachama/<int:member_id>/approve", methods=["POST"])
+@login_required
+@admin_required
+def approve_member(member_id):
+    member = Member.query.get_or_404(member_id)
+    member.status = "approved"
+    member.is_active = True
+    db.session.commit()
+    flash(f"Mwanachama {member.jina} amethibitishwa.", "success")
+    return redirect(url_for("admin.members"))
+
+
 @admin_bp.route("/wanachama/<int:member_id>/futa", methods=["POST"])
 @login_required
 @admin_required
@@ -143,7 +155,6 @@ def whatsapp():
 
         for m in eligible_members:
             phone = "".join(ch for ch in m.simu if ch.isdigit() or ch == "+")
-            # Normalize Tanzanian numbers: convert leading 0 to 255
             if phone.startswith("0"):
                 phone = "255" + phone[1:]
             elif phone.startswith("+"):
@@ -379,6 +390,7 @@ def delete_worship_schedule(schedule_id):
     flash("Ratiba imefutwa.", "info")
     return redirect(url_for("admin.worship_schedule"))
 
+
 @admin_bp.route("/ratiba/<int:schedule_id>/hariri", methods=["GET", "POST"])
 @login_required
 @admin_required
@@ -433,6 +445,7 @@ def delete_leader(leader_id):
     flash("Kiongozi amefutwa.", "info")
     return redirect(url_for("admin.leaders"))
 
+
 @admin_bp.route("/viongozi/<int:leader_id>/hariri", methods=["GET", "POST"])
 @login_required
 @admin_required
@@ -453,3 +466,4 @@ def edit_leader(leader_id):
             flash("Taarifa za kiongozi zimebadilishwa.", "success")
             return redirect(url_for("admin.leaders"))
     return render_template("admin/edit_leader.html", form=form, leader=leader)
+

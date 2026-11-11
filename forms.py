@@ -1,3 +1,5 @@
+import re
+
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import (
@@ -9,7 +11,24 @@ from wtforms import (
     DateField,
     SubmitField,
 )
-from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional
+from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional, ValidationError
+
+
+def validate_tz_phone(form, field):
+    raw = (field.data or "").strip()
+    if not raw:
+        return
+
+    cleaned = re.sub(r"[\s\-\(\)]", "", raw)
+    if cleaned.startswith("+255"):
+        cleaned = "255" + cleaned[3:]
+    elif cleaned.startswith("0"):
+        cleaned = "255" + cleaned[1:]
+
+    if not re.fullmatch(r"255[67][0-9]{8}", cleaned):
+        raise ValidationError("Namba ya simu si sahihi. Mfano: 0712 345 678 au +255712345678")
+
+    field.data = cleaned
 
 
 class SignupForm(FlaskForm):
@@ -48,13 +67,17 @@ class MemberRegistrationForm(FlaskForm):
         validators=[DataRequired()],
     )
     kozi = StringField("Kozi", validators=[DataRequired(), Length(max=150)])
-    simu = StringField("Namba ya Simu", validators=[DataRequired(), Length(min=9, max=20)])
+    simu = StringField("Namba ya Simu", validators=[DataRequired(), Length(min=9, max=20), validate_tz_phone])
     email = StringField("Barua Pepe", validators=[DataRequired(), Email()])
     hostel = StringField("Hostel", validators=[DataRequired(), Length(max=100)])
     tarehe_ya_kuzaliwa = DateField("Tarehe ya Kuzaliwa", format="%Y-%m-%d", validators=[DataRequired(message="Tafadhali weka tarehe yako ya kuzaliwa")])
     vipaji = TextAreaField("Vipaji", validators=[Optional(), Length(max=255)])
     kukubali_whatsapp = BooleanField("Nakubali kupokea ujumbe wa WhatsApp")
     submit = SubmitField("Sajili")
+
+
+class MemberProfileForm(MemberRegistrationForm):
+    submit = SubmitField("Sasisha Taarifa")
 
 
 class AnnouncementForm(FlaskForm):
@@ -147,7 +170,7 @@ class ChoirMediaForm(FlaskForm):
     )
     description = TextAreaField("Maelezo", validators=[Optional()])
     external_url = StringField("Kiungo cha YouTube/Google Drive (hiari)", validators=[Optional(), Length(max=500)])
-    file = FileField("Faili la media (hiari)", validators=[Optional(), FileAllowed(["mp3", "wav", "m4a", "mp4", "mov", "avi", "pdf", "doc", "docx", "png", "jpg", "jpeg", "webp"], "Faili la media linaruhusiwa!")])
+    file = FileField("Faili la media (hiari)", validators=[Optional(), FileAllowed(["mp3", "wav", "m4a", "mp4", "mov", "avi", "pdf", "doc", "docx", "png", "jpg", "jpeg", "webp"], "Faili la media pekee linaruhusiwa!")])
     submit = SubmitField("Hifadhi Media")
 
 
@@ -165,3 +188,4 @@ class LeaderForm(FlaskForm):
     position = StringField("Cheo", validators=[DataRequired(), Length(max=150)])
     photo = FileField("Picha (hiari)", validators=[Optional(), FileAllowed(["png", "jpg", "jpeg", "webp"], "Picha pekee zinaruhusiwa!")])
     submit = SubmitField("Ongeza Kiongozi")
+
