@@ -57,10 +57,15 @@ def profile():
     if not member:
         flash("Huna taarifa za mwanachama bado. Tafadhali jisajili kwanza.", "warning")
         return redirect(url_for("member.register"))
-    return render_template("member_profile.html", member=member)
+
+    # The profile template contains the editable form, so always provide it,
+    # including on the GET request to /member/profile.
+    form = MemberProfileForm(obj=member)
+    return render_template("member_profile.html", form=form, member=member)
 
 
 @member_bp.route("/member/profile/edit", methods=["GET", "POST"])
+@member_bp.route("/member/update", methods=["GET", "POST"])
 @login_required
 def edit_profile():
     member = Member.query.filter_by(user_id=current_user.id).first()
@@ -71,7 +76,11 @@ def edit_profile():
     form = MemberProfileForm(obj=member)
     if form.validate_on_submit():
         email = form.email.data.lower().strip()
-        if Member.query.filter(Member.email.ilike(email), Member.id != member.id).first():
+        duplicate_email = Member.query.filter(
+            db.func.lower(Member.email) == email,
+            Member.id != member.id,
+        ).first()
+        if duplicate_email:
             flash("Barua pepe hii tayari imesajiliwa na mwanachama mwingine.", "danger")
             return render_template("member_profile.html", form=form, member=member)
 
@@ -85,8 +94,7 @@ def edit_profile():
         member.tarehe_ya_kuzaliwa = form.tarehe_ya_kuzaliwa.data
         member.vipaji = form.vipaji.data.strip() if form.vipaji.data else ""
         member.kukubali_whatsapp = form.kukubali_whatsapp.data
-        member.status = "pending" if member.status in (None, "") else member.status
-        member.updated_at = db.func.now()
+        # Member.updated_at is refreshed automatically by its SQLAlchemy onupdate handler.
 
         db.session.commit()
         flash("Taarifa zako zimebadilishwa.", "success")
