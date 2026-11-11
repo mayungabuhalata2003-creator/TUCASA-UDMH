@@ -11,9 +11,15 @@ member_bp = Blueprint("member", __name__)
 @member_bp.route("/usajili-wa-wanachama", methods=["GET", "POST"])
 @login_required
 def register():
+    # Kila akaunti inaruhusiwa kuwa na usajili mmoja tu.
+    existing_member = Member.query.filter_by(user_id=current_user.id).first()
+    if existing_member:
+        flash("Tayari umesajiliwa kama mwanachama.", "info")
+        return redirect(url_for("member.success"))
+
     form = MemberRegistrationForm()
 
-    # Pre-fill email if available
+    # Pre-fill email and name for a new form.
     if not form.is_submitted():
         form.email.data = current_user.email
         form.jina.data = current_user.jina
