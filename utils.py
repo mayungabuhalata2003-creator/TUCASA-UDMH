@@ -20,25 +20,68 @@ def admin_required(f):
     return decorated_function
 
 
+def _extension(filename):
+    return filename.rsplit(".", 1)[1].lower() if "." in filename else ""
+
+
+def _valid_upload(file_storage, allowed_extensions):
+    """Validate extension and size before persisting a randomly named upload."""
+    if not file_storage or not file_storage.filename:
+        return False
+    if _extension(file_storage.filename) not in allowed_extensions:
+        return False
+
+    stream = file_storage.stream
+    try:
+        stream.seek(0, os.SEEK_END)
+        size = stream.tell()
+        stream.seek(0)
+    except (AttributeError, OSError):
+        return False
+    return size <= current_app.config.get("MAX_UPLOAD_FILE_SIZE", 12 * 1024 * 1024)
+
+
+def _save_upload(file_storage, folder, relative_folder, allowed_extensions):
+    if not _valid_upload(file_storage, allowed_extensions):
+        return None
+    extension = _extension(file_storage.filename)
+    os.makedirs(folder, exist_ok=True)
+    filename = f"{uuid.uuid4().hex}.{extension}"
+    file_storage.save(os.path.join(folder, filename))
+    return f"{relative_folder}/{filename}"
+
+
 def allowed_logo_file(filename):
-    return (
-        "." in filename
-        and filename.rsplit(".", 1)[1].lower()
-        in current_app.config["ALLOWED_LOGO_EXTENSIONS"]
-    )
+    return _extension(filename) in current_app.config["ALLOWED_LOGO_EXTENSIONS"]
 
 
 def save_logo_file(file_storage, previous_relative_path=None):
-    """Save an uploaded logo image with a unique filename. Returns relative path or None."""
-    if not file_storage or file_storage.filename == "":
+    """Save a size-limited logo upload and return its static-relative path."""
+    if not file_storage or not file_storage.filename:
         return None
-    if not allowed_logo_file(file_storage.filename):
+    if not _valid_upload(file_storage, current_app.config["ALLOWED_LOGO_EXTENSIONS"]):
         return None
 
-    ext = file_storage.filename.rsplit(".", 1)[1].lower()
-    unique_name = f"{uuid.uuid4().hex}.{ext}"
+    # Verify common image signatures instead of trusting the filename extension.
+    stream = file_storage.stream
+    header = stream.read(12)
+    stream.seek(0)
+    ext = _extension(file_storage.filename)
+    signatures = {
+        "png": header.startswith(b"\x89PNG\r\n\x1a\n"),
+        "jpg": header.startswith(b"\xff\xd8\xff"),
+        "jpeg": header.startswith(b"\xff\xd8\xff"),
+        "gif": header.startswith((b"GIF87a", b"GIF89a")),
+        "webp": header.startswith(b"RIFF") and header[8:12] == b"WEBP",
+    }
+    if not signatures.get(ext, False):
+        return None
+
     upload_folder = current_app.config["UPLOAD_FOLDER"]
     os.makedirs(upload_folder, exist_ok=True)
+    unique_name = f"{uuid.uuid4().hex}.{ext}"
+    filepath = os.path.join(upload_folder, unique_name)
+    file_storage.save(filepath)
 
     if previous_relative_path:
         previous_file = os.path.join(current_app.static_folder, previous_relative_path)
@@ -48,57 +91,44 @@ def save_logo_file(file_storage, previous_relative_path=None):
         except OSError:
             pass
 
-    filepath = os.path.join(upload_folder, unique_name)
-    file_storage.save(filepath)
-
-    # Path relative to /static for use in templates via url_for('static', filename=...)
     return f"uploads/logo/{unique_name}"
 
 
 def save_resource_file(file_storage):
-    if not file_storage or not file_storage.filename:
-        return None
-    extension = file_storage.filename.rsplit(".", 1)[-1].lower()
-    if extension not in {"pdf", "doc", "docx"}:
-        return None
-    os.makedirs(current_app.config["RESOURCE_UPLOAD_FOLDER"], exist_ok=True)
-    filename = f"{uuid.uuid4().hex}.{extension}"
-    file_storage.save(os.path.join(current_app.config["RESOURCE_UPLOAD_FOLDER"], filename))
-    return f"uploads/resources/{filename}"
+    return _save_upload(
+        file_storage,
+        current_app.config["RESOURCE_UPLOAD_FOLDER"],
+        "uploads/resources",
+        {"pdf", "doc", "docx"},
+    )
 
 
 def save_event_image(file_storage):
-    if not file_storage or not file_storage.filename:
-        return None
-    extension = file_storage.filename.rsplit(".", 1)[-1].lower()
-    if extension not in {"png", "jpg", "jpeg", "gif", "webp"}:
-        return None
-    os.makedirs(current_app.config["RESOURCE_UPLOAD_FOLDER"], exist_ok=True)
-    filename = f"{uuid.uuid4().hex}.{extension}"
-    file_storage.save(os.path.join(current_app.config["RESOURCE_UPLOAD_FOLDER"], filename))
-    return f"uploads/resources/{filename}"
+    return _save_upload(
+        file_storage,
+        current_app.config["RESOURCE_UPLOAD_FOLDER"],
+        "uploads/resources",
+        {"png", "jpg", "jpeg", "gif", "webp"},
+    )
 
 
 def save_media_file(file_storage):
-    if not file_storage or not file_storage.filename:
-        return None
-    allowed = {"mp3", "wav", "m4a", "mp4", "mov", "avi", "pdf", "doc", "docx", "png", "jpg", "jpeg", "webp"}
-    extension = file_storage.filename.rsplit(".", 1)[-1].lower()
-    if extension not in allowed:
-        return None
-    os.makedirs(current_app.config["MEDIA_UPLOAD_FOLDER"], exist_ok=True)
-    filename = f"{uuid.uuid4().hex}.{extension}"
-    file_storage.save(os.path.join(current_app.config["MEDIA_UPLOAD_FOLDER"], filename))
-    return f"uploads/media/{filename}"
+    allowed = {
+        "mp3", "wav", "m4a", "mp4", "mov", "avi", "pdf", "doc", "docx",
+        "png", "jpg", "jpeg", "webp",
+    }
+    return _save_upload(
+        file_storage,
+        current_app.config["MEDIA_UPLOAD_FOLDER"],
+        "uploads/media",
+        allowed,
+    )
 
 
 def save_leader_photo(file_storage):
-    if not file_storage or not file_storage.filename:
-        return None
-    extension = file_storage.filename.rsplit(".", 1)[-1].lower()
-    if extension not in {"png", "jpg", "jpeg", "webp"}:
-        return None
-    os.makedirs(current_app.config["RESOURCE_UPLOAD_FOLDER"], exist_ok=True)
-    filename = f"{uuid.uuid4().hex}.{extension}"
-    file_storage.save(os.path.join(current_app.config["RESOURCE_UPLOAD_FOLDER"], filename))
-    return f"uploads/resources/{filename}"
+    return _save_upload(
+        file_storage,
+        current_app.config["RESOURCE_UPLOAD_FOLDER"],
+        "uploads/resources",
+        {"png", "jpg", "jpeg", "webp"},
+    )

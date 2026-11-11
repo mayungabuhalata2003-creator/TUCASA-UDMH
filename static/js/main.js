@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (closeInstallBanner) {
     closeInstallBanner.addEventListener("click", function () {
-      pwaInstallBanner.hidden = true;
+      if (pwaInstallBanner) pwaInstallBanner.hidden = true;
     });
   }
 
@@ -37,22 +37,42 @@ document.addEventListener("DOMContentLoaded", function () {
     navigator.serviceWorker.register("/sw.js").catch(function () {});
   }
 
+  // Add CSRF tokens to POST forms that do not use Flask-WTF hidden_tag().
+  let csrfTokenPromise;
+  document.querySelectorAll('form[method="post"], form[method="POST"]').forEach(function (form) {
+    if (form.querySelector('input[name="csrf_token"]')) return;
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!csrfTokenPromise) {
+        csrfTokenPromise = fetch("/csrf-token", { credentials: "same-origin" })
+          .then(function (response) {
+            if (!response.ok) throw new Error("Unable to retrieve CSRF token");
+            return response.json();
+          })
+          .then(function (data) { return data.csrf_token; });
+      }
+      csrfTokenPromise.then(function (token) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "csrf_token";
+        input.value = token;
+        form.appendChild(input);
+        HTMLFormElement.prototype.submit.call(form);
+      }).catch(function () {
+        window.alert("Imeshindikana kuthibitisha fomu. Tafadhali refresh ukurasa na ujaribu tena.");
+      });
+    });
+  });
+
   const toggleBtn = document.getElementById("sidebarToggle");
   const sidebar = document.getElementById("sidebar");
-
   if (toggleBtn && sidebar) {
     toggleBtn.addEventListener("click", function () {
       sidebar.classList.toggle("show");
     });
-
     document.addEventListener("click", function (e) {
-      if (
-        window.innerWidth < 992 &&
-        sidebar.classList.contains("show") &&
-        !sidebar.contains(e.target) &&
-        e.target !== toggleBtn &&
-        !toggleBtn.contains(e.target)
-      ) {
+      if (window.innerWidth < 992 && sidebar.classList.contains("show") &&
+          !sidebar.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
         sidebar.classList.remove("show");
       }
     });
@@ -62,16 +82,16 @@ document.addEventListener("DOMContentLoaded", function () {
   if (verseCarousel) {
     const slides = Array.from(verseCarousel.querySelectorAll(".verse-slide"));
     let currentIndex = Number(verseCarousel.dataset.startIndex || 0);
-
-    setInterval(function () {
-      currentIndex = (currentIndex + 1) % slides.length;
-      slides.forEach(function (slide, index) {
-        slide.classList.toggle("active", index === currentIndex);
-      });
-    }, 14000);
+    if (slides.length) {
+      setInterval(function () {
+        currentIndex = (currentIndex + 1) % slides.length;
+        slides.forEach(function (slide, index) {
+          slide.classList.toggle("active", index === currentIndex);
+        });
+      }, 14000);
+    }
   }
 
-  // Auto-dismiss alerts after 5 seconds
   document.querySelectorAll(".alert").forEach(function (alertEl) {
     setTimeout(function () {
       const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
