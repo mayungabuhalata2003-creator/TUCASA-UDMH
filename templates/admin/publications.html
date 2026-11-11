@@ -3,79 +3,36 @@
 {% block content %}
 <h3 class="page-heading">Machapisho</h3>
 <p class="page-subtext">Pakia na uongoze machapisho ya kwaya, makala na nyaraka za kiroho.</p>
-
 <div class="card-tucasa p-4 mb-4">
     <form method="post" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="row g-3">
-            <div class="col-md-6">
-                {{ form.title.label(class_='form-label') }}
-                {{ form.title(class_='form-control') }}
-            </div>
-            <div class="col-md-6">
-                {{ form.author.label(class_='form-label') }}
-                {{ form.author(class_='form-control') }}
-            </div>
-            <div class="col-12">
-                {{ form.summary.label(class_='form-label') }}
-                {{ form.summary(class_='form-control', rows=4) }}
-            </div>
-            <div class="col-md-6">
-                {{ form.resource_url.label(class_='form-label') }}
-                {{ form.resource_url(class_='form-control') }}
-            </div>
-            <div class="col-md-6">
-                {{ form.file.label(class_='form-label') }}
-                {{ form.file(class_='form-control') }}
-            </div>
-            <div class="col-12">
-                {{ form.submit(class_='btn btn-success') }}
-            </div>
+            <div class="col-md-6">{{ form.title.label(class_='form-label') }}{{ form.title(class_='form-control') }}</div>
+            <div class="col-md-6">{{ form.author.label(class_='form-label') }}{{ form.author(class_='form-control') }}</div>
+            <div class="col-12">{{ form.summary.label(class_='form-label') }}{{ form.summary(class_='form-control', rows=4) }}</div>
+            <div class="col-md-6">{{ form.resource_url.label(class_='form-label') }}{{ form.resource_url(class_='form-control') }}</div>
+            <div class="col-md-6">{{ form.file.label(class_='form-label') }}{{ form.file(class_='form-control') }}</div>
+            <div class="col-12">{{ form.submit(class_='btn btn-success') }}</div>
         </div>
     </form>
 </div>
-
 <div class="card-tucasa p-4">
     <h5 class="fw-bold mb-3">Orodha ya Machapisho</h5>
     {% if publications %}
-    <div class="table-responsive">
-        <table class="table table-tucasa align-middle">
-            <thead>
-                <tr>
-                    <th>Kichwa</th>
-                    <th>Mwandishi</th>
-                    <th>Muhtasari</th>
-                    <th>Faili</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for pub in publications %}
-                <tr>
-                    <td>{{ pub.title }}</td>
-                    <td>{{ pub.author or '-' }}</td>
-                    <td>{{ pub.summary[:80] if pub.summary else '-' }}{% if pub.summary and pub.summary|length > 80 %}...{% endif %}</td>
-                    <td>
-                        {% if pub.file_path %}
-                            <a href="{{ url_for('static', filename=pub.file_path) }}" target="_blank">Open</a>
-                        {% elif pub.resource_url %}
-                            <a href="{{ pub.resource_url }}" target="_blank">Link</a>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        <form method="post" action="{{ url_for('admin.delete_publication', publication_id=pub.id) }}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Unataka kufuta machapisho haya?')">Futa</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-        <p class="text-muted mb-0">Hakuna machapisho yaliyowekwa bado.</p>
-    {% endif %}
+    <div class="table-responsive"><table class="table table-tucasa align-middle">
+        <thead><tr><th>Kichwa</th><th>Mwandishi</th><th>Muhtasari</th><th>Faili</th><th>Action</th></tr></thead>
+        <tbody>{% for pub in publications %}
+            <tr>
+                <td>{{ pub.title }}</td><td>{{ pub.author or '-' }}</td>
+                <td>{{ pub.summary[:80] if pub.summary else '-' }}{% if pub.summary and pub.summary|length > 80 %}...{% endif %}</td>
+                <td>{% if pub.file_path %}<a href="{{ url_for('static', filename=pub.file_path) }}" target="_blank" rel="noopener">Fungua</a>{% elif pub.resource_url %}<a href="{{ pub.resource_url }}" target="_blank" rel="noopener">Kiungo</a>{% else %}-{% endif %}</td>
+                <td><form method="post" action="{{ url_for('admin.delete_publication', publication_id=pub.id) }}" onsubmit="return confirm('Unataka kufuta machapisho haya?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Futa</button>
+                </form></td>
+            </tr>
+        {% endfor %}</tbody>
+    </table></div>
+    {% else %}<p class="text-muted mb-0">Hakuna machapisho yaliyowekwa bado.</p>{% endif %}
 </div>
 {% endblock %}

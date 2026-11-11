@@ -3,63 +3,14 @@
 {% block content %}
 <h3 class="page-heading">Mipangilio ya Mfumo</h3>
 <p class="page-subtext">Hariri sehemu muhimu za tovuti na mawasiliano ya TUCASA.</p>
-
-<div class="card-tucasa p-4 shadow-sm" style="max-width:700px; border-radius: 12px; background-color: #ffffff;">
-    <!-- Tumeongeza enctype="multipart/form-data" kwa ajili ya kuruhusu uwekaji wa picha/logo -->
-    <form method="POST" enctype="multipart/form-data" novalidate>
+<div class="card-tucasa p-4 shadow-sm" style="max-width:700px; border-radius:12px; background-color:#fff;">
+    <form method="POST" novalidate>
         {{ form.hidden_tag() }}
-
-        <!-- 1. Jina la Chama -->
-        <div class="mb-3">
-            {{ form.association_name.label(class="form-label fw-semibold") }}
-            {{ form.association_name(class="form-control " + ("is-invalid" if form.association_name.errors else "")) }}
-            {% for error in form.association_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-        </div>
-
-        <!-- 2. Jina la Hostel -->
-        <div class="mb-3">
-            {{ form.hostel_name.label(class="form-label fw-semibold") }}
-            {{ form.hostel_name(class="form-control " + ("is-invalid" if form.hostel_name.errors else "")) }}
-            {% for error in form.hostel_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-        </div>
-
-        <!-- 3. Nembo ya Mfumo (Logo Upload) - Hii ni mpya -->
-        {% if form.site_logo %}
-        <div class="mb-3">
-            {{ form.site_logo.label(class="form-label fw-semibold") }}
-            {{ form.site_logo(class="form-control " + ("is-invalid" if form.site_logo.errors else "")) }}
-            <small class="text-muted">Pakia picha ya muundo wa PNG au JPG (Inashauriwa 512x512 px)</small>
-            {% for error in form.site_logo.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- 4. Kiungo cha WhatsApp -->
-        <div class="mb-3">
-            {{ form.whatsapp_link.label(class="form-label fw-semibold") }}
-            {{ form.whatsapp_link(class="form-control " + ("is-invalid" if form.whatsapp_link.errors else "")) }}
-            {% for error in form.whatsapp_link.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-        </div>
-
-        <!-- 5. Chaneli ya YouTube au Instagram - Hii ni mpya -->
-        {% if form.youtube_link %}
-        <div class="mb-3">
-            {{ form.youtube_link.label(class="form-label fw-semibold") }}
-            {{ form.youtube_link(class="form-control " + ("is-invalid" if form.youtube_link.errors else "")) }}
-            {% for error in form.youtube_link.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- 6. Barua Pepe ya Mawasiliano -->
-        <div class="mb-3">
-            {{ form.contact_email.label(class="form-label fw-semibold") }}
-            {{ form.contact_email(class="form-control " + ("is-invalid" if form.contact_email.errors else "")) }}
-            {% for error in form.contact_email.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-        </div>
-
-        <!-- Kitufe cha mabadiliko kikiwa na muonekano nadhifu wa tucasa -->
-        <div class="mt-4">
-            {{ form.submit(class="btn btn-success px-4 py-2 fw-bold w-100", value="Hifadhi Mipangilio") }}
-        </div>
+        <div class="mb-3">{{ form.association_name.label(class="form-label fw-semibold") }}{{ form.association_name(class="form-control" + (" is-invalid" if form.association_name.errors else "")) }}{% for error in form.association_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}</div>
+        <div class="mb-3">{{ form.hostel_name.label(class="form-label fw-semibold") }}{{ form.hostel_name(class="form-control" + (" is-invalid" if form.hostel_name.errors else "")) }}{% for error in form.hostel_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}</div>
+        <div class="mb-3">{{ form.whatsapp_link.label(class="form-label fw-semibold") }}{{ form.whatsapp_link(class="form-control" + (" is-invalid" if form.whatsapp_link.errors else "")) }}{% for error in form.whatsapp_link.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}</div>
+        <div class="mb-3">{{ form.contact_email.label(class="form-label fw-semibold") }}{{ form.contact_email(class="form-control" + (" is-invalid" if form.contact_email.errors else "")) }}{% for error in form.contact_email.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}</div>
+        {{ form.submit(class="btn btn-success px-4 py-2 fw-bold w-100") }}
     </form>
 </div>
 {% endblock %}

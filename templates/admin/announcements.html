@@ -3,42 +3,28 @@
 {% block content %}
 <h3 class="page-heading">Simamia Matangazo</h3>
 <p class="page-subtext">Ongeza, hariri au futa matangazo ya TUMH.</p>
-
 <div class="row g-4">
-    <div class="col-lg-5">
-        <div class="card-tucasa p-4">
-            <h5 class="fw-bold mb-3">Ongeza Tangazo Jipya</h5>
-            <form method="POST" novalidate>
-                {{ form.hidden_tag() }}
-                <div class="mb-3">
-                    {{ form.title.label(class="form-label") }}
-                    {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
-                    {% for error in form.title.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-                </div>
-                <div class="mb-3">
-                    {{ form.content.label(class="form-label") }}
-                    {{ form.content(class="form-control" + (" is-invalid" if form.content.errors else ""), rows="4") }}
-                    {% for error in form.content.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-                </div>
-                {{ form.submit(class="btn btn-green btn w-100") }}
-            </form>
-        </div>
-    </div>
+    <div class="col-lg-5"><div class="card-tucasa p-4">
+        <h5 class="fw-bold mb-3">Ongeza Tangazo Jipya</h5>
+        <form method="POST" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">{{ form.title.label(class="form-label") }}{{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}{% for error in form.title.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}</div>
+            <div class="mb-3">{{ form.content.label(class="form-label") }}{{ form.content(class="form-control" + (" is-invalid" if form.content.errors else ""), rows="4") }}{% for error in form.content.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}</div>
+            {{ form.submit(class="btn btn-green btn w-100") }}
+        </form>
+    </div></div>
     <div class="col-lg-7">
         {% for a in announcements %}
         <div class="card-tucasa p-3 mb-3">
-            <div class="d-flex justify-content-between">
-                <h6 class="fw-bold">{{ a.title }}</h6>
-                <form method="POST" action="{{ url_for('admin.delete_announcement', announcement_id=a.id) }}" onsubmit="return confirm('Futa tangazo hili?');">
-                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+            <div class="d-flex justify-content-between"><h6 class="fw-bold">{{ a.title }}</h6>
+                <form method="POST" action="{{ url_for('admin.delete_announcement', announcement_id=a.id) }}" onsubmit="return confirm('Futa tangazo hili?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Futa tangazo"><i class="bi bi-trash"></i></button>
                 </form>
             </div>
-            <p class="small mb-1">{{ a.content }}</p>
-            <small class="text-muted">{{ a.tarehe.strftime('%d %b %Y, %H:%M') }}</small>
+            <p class="small mb-1">{{ a.content }}</p><small class="text-muted">{{ a.tarehe.strftime('%d %b %Y, %H:%M') }}</small>
         </div>
-        {% else %}
-        <div class="card-tucasa p-4 text-center text-muted">Hakuna matangazo bado.</div>
-        {% endfor %}
+        {% else %}<div class="card-tucasa p-4 text-center text-muted">Hakuna matangazo bado.</div>{% endfor %}
     </div>
 </div>
 {% endblock %}
